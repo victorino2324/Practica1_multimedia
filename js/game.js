@@ -386,8 +386,9 @@ var game = {
 	
 
 		// Dibujar el fondo con desplazamiento de paralaje
-		game.context.drawImage(game.currentLevel.backgroundImage,game.offsetLeft/4,0,640,480,0,0,640,480);
 		game.context.drawImage(game.currentLevel.foregroundImage,game.offsetLeft,0,640,480,0,0,640,480);
+		game.context.drawImage(game.currentLevel.backgroundImage,game.offsetLeft,0,640,480,0,0,640,480);
+		
 
 		// Dibujar la honda
 		game.context.drawImage(game.slingshotImage,game.slingshotX-game.offsetLeft,game.slingshotY);
@@ -487,8 +488,8 @@ var levels = {
 	// Datos de nivel
 	data:[
 	 {   // Primer nivel 
-		foreground:'desert-foreground',
-		background:'clouds-background',
+		foreground:'house1',
+		background:'dust',
 		entities:[
 			{type:"ground", name:"dirt", x:500,y:440,width:1000,height:20,isStatic:true},
 			{type:"ground", name:"wood", x:185,y:390,width:30,height:80,isStatic:true},
@@ -506,8 +507,8 @@ var levels = {
 		]
 	 },
 		{   // Segundo nivel
-			foreground:'desert-foreground',
-			background:'clouds-background',
+			foreground:'house2',
+			background:'dust',
 			entities:[
 				{type:"ground", name:"dirt", x:500,y:440,width:1000,height:20,isStatic:true},
 				{type:"ground", name:"wood", x:185,y:390,width:30,height:80,isStatic:true},
@@ -530,8 +531,87 @@ var levels = {
 				{type:"hero", name:"orange",x:80,y:405},
 				{type:"hero", name:"apple",x:140,y:405},
 			]
-		}
-	],
+		},
+	{   // Tercer nivel
+		foreground:'house3',
+		background:'dust',
+		entities:[
+			{type:"ground", name:"dirt", x:500,y:440,width:1000,height:20,isStatic:true},
+			{type:"ground", name:"wood", x:185,y:390,width:30,height:80,isStatic:true},
+
+			
+			{type:"block", name:"wood", x:650,y:380,angle:90,width:100,height:25},
+			{type:"block", name:"wood", x:750,y:380,angle:90,width:100,height:25},
+			{type:"block", name:"glass", x:700,y:317.5,width:100,height:25},
+			
+			{type:"villain", name:"fries",x:700,y:280,calories:420},
+
+			
+			{type:"block", name:"glass", x:650,y:255,angle:90,width:100,height:25},
+			{type:"block", name:"glass", x:750,y:255,angle:90,width:100,height:25},
+			{type:"block", name:"wood", x:700,y:192.5,width:100,height:25},
+			
+			{type:"villain", name:"sodacan",x:700,y:165,calories:150},
+
+			
+			{type:"block", name:"wood", x:650,y:130,angle:90,width:100,height:25},
+			{type:"block", name:"wood", x:750,y:130,angle:90,width:100,height:25},
+			{type:"block", name:"glass", x:700,y:67.5,width:100,height:25},
+			
+			{type:"villain", name:"burger",x:700,y:30,calories:590},
+
+			
+			{type:"block", name:"glass", x:850,y:405,width:50,height:25},
+			{type:"villain", name:"sodacan",x:850,y:380,calories:150},
+
+			{type:"block", name:"glass", x:550,y:405,width:50,height:25},
+			{type:"villain", name:"sodacan",x:550,y:380,calories:150},
+
+			{type:"hero", name:"orange",x:30,y:415},
+			{type:"hero", name:"orange",x:80,y:405},
+			{type:"hero", name:"apple",x:140,y:405},
+		]
+	},
+	{   
+		foreground:'house4',
+		background:'dust',
+		entities:[
+			{type:"ground", name:"dirt", x:500,y:440,width:1000,height:20,isStatic:true},
+			{type:"ground", name:"wood", x:185,y:390,width:30,height:80,isStatic:true},
+
+			
+			{type:"block", name:"wood", x:520,y:380,angle:90,width:100,height:25},
+			{type:"block", name:"wood", x:580,y:380,angle:90,width:100,height:25},
+			{type:"block", name:"wood", x:550,y:317.5,width:100,height:25},
+			{type:"villain", name:"fries",x:550,y:295,calories:420},
+			
+			
+			{type:"block", name:"glass", x:530,y:255,angle:90,width:100,height:25},
+			{type:"block", name:"glass", x:570,y:255,angle:90,width:100,height:25},
+			{type:"block", name:"wood", x:550,y:192.5,width:100,height:25},
+			{type:"villain", name:"burger",x:550,y:165,calories:590},
+
+			
+			{type:"block", name:"glass", x:750,y:380,angle:90,width:100,height:25},
+			{type:"block", name:"glass", x:810,y:380,angle:90,width:100,height:25},
+			{type:"block", name:"glass", x:780,y:317.5,width:100,height:25},
+			{type:"villain", name:"sodacan",x:780,y:295,calories:150},
+			
+			{type:"block", name:"wood", x:760,y:255,angle:90,width:100,height:25},
+			{type:"block", name:"wood", x:800,y:255,angle:90,width:100,height:25},
+			{type:"block", name:"glass", x:780,y:192.5,width:100,height:25},
+			{type:"villain", name:"burger",x:780,y:165,calories:590},
+
+			
+			{type:"block", name:"wood", x:665,y:405,width:50,height:25},
+			{type:"villain", name:"fries",x:665,y:380,calories:420},
+
+			{type:"hero", name:"strawberry",x:30,y:415},
+			{type:"hero", name:"orange",x:80,y:405},
+			{type:"hero", name:"apple",x:140,y:405},
+		]
+	}
+],
 
 	// Inicializar pantalla de selección de nivel
 	init:function(){
