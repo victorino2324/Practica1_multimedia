@@ -40,6 +40,14 @@ $(window).load(function() {
 });
 
 var game = {
+	// Opciones de música de fondo disponibles
+	musicOptions: [
+		{name: "16 Bit", file: "audio/bg-tracks/16bit"},
+		{name: "Silly", file: "audio/bg-tracks/silly"},
+		{name: "Relaxing", file: "audio/bg-tracks/relaxing"}
+	],
+	selectedMusicIndex: 1, // Por defecto, Silly
+	
 	// Inicialización de objetos, precarga de elementos y pantalla de inicio
 	init: function(){
 		// Inicialización de objetos   
@@ -47,19 +55,19 @@ var game = {
 		loader.init();
 		mouse.init();
 
-		// Cargar todos los efectos de sonido y música de fondo
-	
-		//"Kindergarten" by Gurdonark
-		//http://ccmixter.org/files/gurdonark/26491 is licensed under a Creative Commons license
-		game.backgroundMusic = loader.loadSound('audio/gurdonark-kindergarten');
+		// Cargar la música de fondo por defecto (Silly)
+		game.backgroundMusic = new Audio();
+		game.backgroundMusic.src = "audio/bg-tracks/silly" + loader.soundFileExtn;
+		game.backgroundMusic.preload = "auto";
+		game.backgroundMusic.loop = true;
 
+		// Cargar todos los efectos de sonido
 		game.slingshotReleasedSound = loader.loadSound("audio/released");
 		game.bounceSound = loader.loadSound('audio/bounce');
 		game.breakSound = {
 			"glass":loader.loadSound('audio/glassbreak'),
 			"wood":loader.loadSound('audio/woodbreak')
 		};
-
 
 		// Ocultar todas las capas del juego y mostrar la pantalla de inicio
 		$('.gamelayer').hide();
@@ -68,24 +76,73 @@ var game = {
 		//Obtener el controlador para el lienzo de juego y el contexto
 		game.canvas = document.getElementById('gamecanvas');
 		game.context = game.canvas.getContext('2d');
+	},
+	
+	showMusicSelectScreen: function(){
+		$('.gamelayer').hide();
+		
+		// Generar las opciones de música dinámicamente
+		var musicOptionsHTML = "";
+		for(var i = 0; i < game.musicOptions.length; i++){
+			var checked = (i === game.selectedMusicIndex) ? "checked" : "";
+			musicOptionsHTML += '<div style="margin:10px;">';
+			musicOptionsHTML += '<label style="color:white; font-size:18px; cursor:pointer;">';
+			musicOptionsHTML += '<input type="radio" name="musicselect" value="' + i + '" ' + checked + ' onchange="game.selectMusic(' + i + ');" style="width:16px; height:16px; vertical-align:middle; margin-right:8px;">';
+			musicOptionsHTML += game.musicOptions[i].name;
+			musicOptionsHTML += '</label>';
+			musicOptionsHTML += '</div>';
+		}
+		
+		$('#musicoptions').html(musicOptionsHTML);
+		$('#musicselectscreen').show('slow');
+	},
+	
+	selectMusic: function(index){
+		game.selectedMusicIndex = index;
+	},
+	
+	saveSelectedMusic: function(){
+		// Detener la música actual si existe
+		if (game.backgroundMusic) {
+			game.backgroundMusic.pause();
+		}
+		
+		var selectedFile = game.musicOptions[game.selectedMusicIndex].file;
+		game.backgroundMusic = new Audio();
+		game.backgroundMusic.src = selectedFile + loader.soundFileExtn;
+		game.backgroundMusic.preload = "auto";
+		game.backgroundMusic.loop = true;
+		
+		// Ir a la selección de nivel
+		game.showLevelScreen();
 	},	  
 	startBackgroundMusic:function(){
-		var toggleImage = $("#togglemusic")[0];	
-		game.backgroundMusic.play();
-		toggleImage.src="images/icons/sound.png";	
+		var toggleImage = $("#togglemusic")[0];
+		if (game.backgroundMusic) {
+			var playPromise = game.backgroundMusic.play();
+			if (playPromise !== undefined) {
+				playPromise.then(function() {
+					toggleImage.src="images/icons/sound.png";
+				}).catch(function(error) {
+					console.log("No se pudo reproducir la música automáticamente:", error);
+				});
+			}
+		}
 	},
 	stopBackgroundMusic:function(){
 		var toggleImage = $("#togglemusic")[0];	
-		toggleImage.src="images/icons/nosound.png";	
-		game.backgroundMusic.pause();
-		game.backgroundMusic.currentTime = 0; // Ir al comienzo de la canción
+		toggleImage.src="images/icons/nosound.png";
+		if (game.backgroundMusic) {
+			game.backgroundMusic.pause();
+			game.backgroundMusic.currentTime = 0; // Ir al comienzo de la canción
+		}
 	},
 	toggleBackgroundMusic:function(){
 		var toggleImage = $("#togglemusic")[0];
-		if(game.backgroundMusic.paused){
+		if(game.backgroundMusic && game.backgroundMusic.paused){
 			game.backgroundMusic.play();
 			toggleImage.src="images/icons/sound.png";
-		} else {
+		} else if (game.backgroundMusic) {
 			game.backgroundMusic.pause();	
 			$("#togglemusic")[0].src="images/icons/nosound.png";
 		}
@@ -206,6 +263,8 @@ var game = {
 				game.currentHero.SetPosition({x:(mouse.x+game.offsetLeft)/box2d.scale,y:mouse.y/box2d.scale});
 			} else {
 				game.mode = "fired";
+				// Marcar el héroe como lanzado
+				game.currentHero.GetUserData().launched = true;
 				game.slingshotReleasedSound.play();								
 				var impulseScaleFactor = 0.75;
 				
@@ -219,12 +278,29 @@ var game = {
 		}
 
 		if (game.mode == "fired"){		
+			// Verificar si el héroe actual todavía existe
+			if(!game.currentHero){
+				game.mode = "load-next-hero";
+				return;
+			}
+			
 			//Vista panorámica donde el héroe se encuentra actualmente...
 			var heroX = game.currentHero.GetPosition().x*box2d.scale;
+			var heroY = game.currentHero.GetPosition().y*box2d.scale;
 			game.panTo(heroX);
 
-			//Y esperar hasta que deja de moverse o está fuera de los límites
-			if(!game.currentHero.IsAwake() || heroX<0 || heroX >game.currentLevel.foregroundImage.width ){
+			// Verificar si sale por cualquier lado: izquierda, derecha, arriba o abajo
+			var outOfBounds = heroX < -50 || heroX > game.currentLevel.foregroundImage.width + 50 || 
+			                  heroY < -50 || heroY > game.currentLevel.foregroundImage.height + 50;
+			
+			// Solo destruir si está fuera de los límites (no por estar dormido)
+			if(outOfBounds){
+				// Limpiar el temporizador si existe
+				var heroEntity = game.currentHero.GetUserData();
+				if(heroEntity.groundTimer){
+					clearTimeout(heroEntity.groundTimer);
+					heroEntity.groundTimer = undefined;
+				}
 				// Luego borra el viejo héroe
 				box2d.world.DestroyBody(game.currentHero);
 				game.currentHero = undefined;
@@ -340,7 +416,22 @@ var game = {
   
 			if(entity){
 				var entityX = body.GetPosition().x*box2d.scale;
-				if(entityX<0|| entityX>game.currentLevel.foregroundImage.width||(entity.health && entity.health <0)){
+				var entityY = body.GetPosition().y*box2d.scale;
+				
+				// Verificar si está fuera de los límites o sin salud
+				var outOfBounds = entityX < -50 || entityX > game.currentLevel.foregroundImage.width + 50 || 
+				                  entityY < -50 || entityY > game.currentLevel.foregroundImage.height + 50;
+				
+				if(outOfBounds || (entity.health && entity.health < 0)){
+					// Limpiar el temporizador si existe
+					if(entity.groundTimer){
+						clearTimeout(entity.groundTimer);
+						entity.groundTimer = undefined;
+					}
+					// Si es el héroe actual, limpiar la referencia
+					if(game.currentHero && body === game.currentHero){
+						game.currentHero = undefined;
+					}
 					box2d.world.DestroyBody(body);
 					if (entity.type=="villain"){
 						game.score += entity.calories;
@@ -453,6 +544,12 @@ var levels = {
 		
 		// Establecer los controladores de eventos de clic de botón para cargar el nivel
 		$('#levelselectscreen input').click(function(){
+			// Intentar reproducir la música al hacer clic (interacción del usuario)
+			if (game.backgroundMusic && game.backgroundMusic.paused) {
+				game.backgroundMusic.play().catch(function(e) {
+					console.log("Error reproduciendo música:", e);
+				});
+			}
 			levels.load(this.value-1);
 			$('#levelselectscreen').hide();
 		});
@@ -652,6 +749,37 @@ var box2d = {
 		box2d.world.SetDebugDraw(debugDraw);
 	
 		var listener = new Box2D.Dynamics.b2ContactListener;
+		
+		// Detectar cuando un héroe lanzado toca cualquier superficie (suelo o bloque)
+		listener.BeginContact = function(contact){
+			var body1 = contact.GetFixtureA().GetBody();
+			var body2 = contact.GetFixtureB().GetBody();
+			var entity1 = body1.GetUserData();
+			var entity2 = body2.GetUserData();
+			
+			// Verificar si uno es un héroe y el otro es una superficie (suelo o bloque)
+			if(entity1 && entity2){
+				var hero = null;
+				var surface = null;
+				
+				if(entity1.type === "hero" && (entity2.type === "ground" || entity2.type === "block")){
+					hero = entity1;
+					surface = entity2;
+				} else if(entity2.type === "hero" && (entity1.type === "ground" || entity1.type === "block")){
+					hero = entity2;
+					surface = entity1;
+				}
+				
+				// Si un héroe tocó una superficie, ha sido lanzado, y aún no tiene temporizador activo
+				if(hero && hero.launched && !hero.groundTimer){
+					hero.groundTimer = setTimeout(function(){
+						// Después de 5 segundos, eliminar la vida del héroe
+						hero.health = -1;
+					}, 5000); // 5000 milisegundos = 5 segundos
+				}
+			}
+		};
+		
 		listener.PostSolve = function(contact,impulse){
 			var body1 = contact.GetFixtureA().GetBody();
 			var body2 = contact.GetFixtureB().GetBody();
@@ -766,8 +894,8 @@ var loader = {
 			oggSupport = false;	
 		}
 
-		// Comprobar para ogg, después mp3, y finalmente fijar soundFileExtn a indefinido
-		loader.soundFileExtn = oggSupport?".ogg":mp3Support?".mp3":undefined;		
+		// Comprobar para mp3 primero, después ogg, y finalmente fijar soundFileExtn a indefinido
+		loader.soundFileExtn = mp3Support?".mp3":oggSupport?".ogg":undefined;		
 	},
 	
 	loadImage:function(url){
@@ -779,7 +907,7 @@ var loader = {
 		image.onload = loader.itemLoaded;
 		return image;
 	},
-	soundFileExtn:".ogg",
+	soundFileExtn:".mp3",
 	loadSound:function(url){
 		this.totalCount++;
 		this.loaded = false;
