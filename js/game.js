@@ -192,8 +192,8 @@ var game = {
 	// La puntuación del juego
 	score: 0,
 
-	// Dividir la orange en dos
-	splitOrange: function(heroBody) {
+	// Dividir el fastcat en dos
+	splitFastcat: function(heroBody) {
 		var entity = heroBody.GetUserData();
 		
 		// Verificar que el cuerpo todavía existe
@@ -203,10 +203,10 @@ var game = {
 		var position = heroBody.GetPosition();
 		var velocity = heroBody.GetLinearVelocity();
 		
-		// Crear una segunda orange en la misma posición
+		// Crear un segundo fastcat en la misma posición
 		var newEntity = {
 			type: "hero",
-			name: "orange",
+			name: "fastcat",
 			x: position.x * box2d.scale,
 			y: position.y * box2d.scale,
 			health: entity.fullHealth,
@@ -218,16 +218,16 @@ var game = {
 			launched: true
 		};
 		
-		var definition = entities.definitions["orange"];
+		var definition = entities.definitions["fastcat"];
 		var newBody = box2d.createCircle(newEntity, definition);
 		
 		// Aplicar impulsos en direcciones diferentes
-		// Naranja original va hacia arriba-izquierda
+		// Gato original va hacia arriba-izquierda
 		var splitForce = 3;
 		var impulse1 = new b2Vec2(velocity.x - splitForce, velocity.y - splitForce);
 		heroBody.SetLinearVelocity(impulse1);
 		
-		// Nueva naranja va hacia arriba-derecha
+		// Nuevo gato va hacia arriba-derecha
 		var impulse2 = new b2Vec2(velocity.x + splitForce, velocity.y - splitForce);
 		newBody.SetLinearVelocity(impulse2);
 		
@@ -236,8 +236,8 @@ var game = {
 		newBody.SetAngularVelocity(-2);
 	},
 
-	// Duplicar el tamaño del apple
-	enlargeApple: function(heroBody) {
+	// Duplicar el tamaño del strongcat
+	enlargeStrongcat: function(heroBody) {
 		var entity = heroBody.GetUserData();
 		
 		// Guardar la velocidad actual
@@ -362,24 +362,24 @@ var game = {
 				var impulse = new b2Vec2((slingshotCenterX - mouse.x - game.offsetLeft) * impulseScaleFactor, (slingshotCenterY - mouse.y) * impulseScaleFactor);
 				game.currentHero.ApplyImpulse(impulse, game.currentHero.GetWorldCenter());
 				
-				// Si es un apple, duplicar su tamaño después de 0.5 segundos
-				if (game.currentHero.GetUserData().name === "apple") {
+				// Si es un strongcat, duplicar su tamaño después de 0.35 segundos
+				if (game.currentHero.GetUserData().name === "strongcat") {
 					var heroBody = game.currentHero;
 					setTimeout(function() {
 						// Verificar que el héroe todavía existe
 						if (heroBody && heroBody.GetUserData()) {
-							game.enlargeApple(heroBody);
+							game.enlargeStrongcat(heroBody);
 						}
 					}, 350);
 				}
 				
-				// Si es una orange, dividirla en dos después de 300ms
-				if (game.currentHero.GetUserData().name === "orange") {
+				// Si es un fastcat, dividirlo en dos después de 300ms
+				if (game.currentHero.GetUserData().name === "fastcat") {
 					var heroBody = game.currentHero;
 					setTimeout(function() {
 						// Verificar que el héroe todavía existe
 						if (heroBody && heroBody.GetUserData()) {
-							game.splitOrange(heroBody);
+							game.splitFastcat(heroBody);
 						}
 					}, 300);
 				}
@@ -622,14 +622,14 @@ var levels = {
 
 				{ type: "block", name: "wood", x: 520, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 520, y: 280, angle: 90, width: 100, height: 25 },
-				{ type: "villain", name: "burger", x: 520, y: 205, calories: 590 },
+				{ type: "villain", name: "villain2", x: 520, y: 205, calories: 590 },
 
 				{ type: "block", name: "wood", x: 620, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 620, y: 280, angle: 90, width: 100, height: 25 },
-				{ type: "villain", name: "fries", x: 620, y: 205, calories: 420 },
+				{ type: "villain", name: "villain3", x: 620, y: 205, calories: 420 },
 
-				{ type: "hero", name: "orange", x: 80, y: 405 },
-				{ type: "hero", name: "apple", x: 140, y: 405 },
+				{ type: "hero", name: "fastcat", x: 80, y: 405 },
+				{ type: "hero", name: "strongcat", x: 140, y: 405 },
 			]
 		},
 		{   // Segundo nivel
@@ -649,13 +649,13 @@ var levels = {
 				{ type: "block", name: "glass", x: 770, y: 255, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 720, y: 192.5, width: 100, height: 25 },
 
-				{ type: "villain", name: "burger", x: 715, y: 155, calories: 590 },
-				{ type: "villain", name: "fries", x: 670, y: 405, calories: 420 },
-				{ type: "villain", name: "sodacan", x: 765, y: 400, calories: 150 },
+				{ type: "villain", name: "villain2", x: 715, y: 155, calories: 590 },
+				{ type: "villain", name: "villain3", x: 670, y: 405, calories: 420 },
+				{ type: "villain", name: "villain3", x: 765, y: 400, calories: 150 },
 
-				{ type: "hero", name: "strawberry", x: 30, y: 415 },
-				{ type: "hero", name: "orange", x: 80, y: 405 },
-				{ type: "hero", name: "apple", x: 140, y: 405 },
+				{ type: "hero", name: "cat", x: 30, y: 415 },
+				{ type: "hero", name: "fastcat", x: 80, y: 405 },
+				{ type: "hero", name: "strongcat", x: 140, y: 405 },
 			]
 		},
 		{   // Tercer nivel
@@ -670,32 +670,32 @@ var levels = {
 				{ type: "block", name: "wood", x: 750, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 700, y: 317.5, width: 100, height: 25 },
 
-				{ type: "villain", name: "fries", x: 700, y: 280, calories: 420 },
+				{ type: "villain", name: "villain3", x: 700, y: 280, calories: 420 },
 
 
 				{ type: "block", name: "glass", x: 650, y: 255, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 750, y: 255, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 700, y: 192.5, width: 100, height: 25 },
 
-				{ type: "villain", name: "sodacan", x: 700, y: 165, calories: 150 },
+				{ type: "villain", name: "villain3", x: 700, y: 165, calories: 150 },
 
 
 				{ type: "block", name: "wood", x: 650, y: 130, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 750, y: 130, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 700, y: 67.5, width: 100, height: 25 },
 
-				{ type: "villain", name: "burger", x: 700, y: 30, calories: 590 },
+				{ type: "villain", name: "villain2", x: 700, y: 30, calories: 590 },
 
 
 				{ type: "block", name: "glass", x: 850, y: 405, width: 50, height: 25 },
-				{ type: "villain", name: "sodacan", x: 850, y: 380, calories: 150 },
+				{ type: "villain", name: "villain3", x: 850, y: 380, calories: 150 },
 
 				{ type: "block", name: "glass", x: 550, y: 405, width: 50, height: 25 },
-				{ type: "villain", name: "sodacan", x: 550, y: 380, calories: 150 },
+				{ type: "villain", name: "villain3", x: 550, y: 380, calories: 150 },
 
-				{ type: "hero", name: "orange", x: 30, y: 415 },
-				{ type: "hero", name: "orange", x: 80, y: 405 },
-				{ type: "hero", name: "apple", x: 140, y: 405 },
+				{ type: "hero", name: "fastcat", x: 30, y: 415 },
+				{ type: "hero", name: "fastcat", x: 80, y: 405 },
+				{ type: "hero", name: "strongcat", x: 140, y: 405 },
 			]
 		},
 		{
@@ -709,32 +709,32 @@ var levels = {
 				{ type: "block", name: "wood", x: 520, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 580, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 550, y: 317.5, width: 100, height: 25 },
-				{ type: "villain", name: "fries", x: 550, y: 295, calories: 420 },
+				{ type: "villain", name: "villain3", x: 550, y: 295, calories: 420 },
 
 
 				{ type: "block", name: "glass", x: 530, y: 255, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 570, y: 255, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 550, y: 192.5, width: 100, height: 25 },
-				{ type: "villain", name: "burger", x: 550, y: 165, calories: 590 },
+				{ type: "villain", name: "villain2", x: 550, y: 165, calories: 590 },
 
 
 				{ type: "block", name: "glass", x: 750, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 810, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 780, y: 317.5, width: 100, height: 25 },
-				{ type: "villain", name: "sodacan", x: 780, y: 295, calories: 150 },
+				{ type: "villain", name: "villain3", x: 780, y: 295, calories: 150 },
 
 				{ type: "block", name: "wood", x: 760, y: 255, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 800, y: 255, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "glass", x: 780, y: 192.5, width: 100, height: 25 },
-				{ type: "villain", name: "burger", x: 780, y: 165, calories: 590 },
+				{ type: "villain", name: "villain2", x: 780, y: 165, calories: 590 },
 
 
 				{ type: "block", name: "wood", x: 665, y: 405, width: 50, height: 25 },
-				{ type: "villain", name: "fries", x: 665, y: 380, calories: 420 },
+				{ type: "villain", name: "villain3", x: 665, y: 380, calories: 420 },
 
-				{ type: "hero", name: "strawberry", x: 30, y: 415 },
-				{ type: "hero", name: "orange", x: 80, y: 405 },
-				{ type: "hero", name: "apple", x: 140, y: 405 },
+				{ type: "hero", name: "cat", x: 30, y: 415 },
+				{ type: "hero", name: "fastcat", x: 80, y: 405 },
+				{ type: "hero", name: "strongcat", x: 140, y: 405 },
 			]
 		},
 		{
@@ -748,27 +748,27 @@ var levels = {
 				// TORRE IZQUIERDA
 				{ type: "block", name: "wood", x: 550, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 550, y: 317.5, width: 100, height: 25 },
-				{ type: "villain", name: "fries", x: 550, y: 290, calories: 420 },
+				{ type: "villain", name: "villain3", x: 550, y: 290, calories: 420 },
 
 				// TORRE MEDIA
 				{ type: "block", name: "glass", x: 670, y: 400, angle: 90, width: 80, height: 25 },
 				{ type: "block", name: "glass", x: 730, y: 400, angle: 90, width: 80, height: 25 },
 				{ type: "block", name: "glass", x: 700, y: 350, width: 110, height: 25 },
-				{ type: "villain", name: "sodacan", x: 700, y: 410, calories: 150 },
+				{ type: "villain", name: "villain3", x: 700, y: 410, calories: 150 },
 
 				{ type: "block", name: "glass", x: 670, y: 310, angle: 90, width: 80, height: 25 },
 				{ type: "block", name: "glass", x: 730, y: 310, angle: 90, width: 80, height: 25 }, 
 				{ type: "block", name: "glass", x: 700, y: 260, width: 110, height: 25 }, 
-				{ type: "villain", name: "sodacan", x: 700, y: 200, calories: 590 }, 
+				{ type: "villain", name: "villain3", x: 700, y: 200, calories: 590 }, 
 
 				// TORRE DERECHA
 				{ type: "block", name: "wood", x: 850, y: 380, angle: 90, width: 100, height: 25 },
 				{ type: "block", name: "wood", x: 850, y: 317.5, width: 100, height: 25 },
-				{ type: "villain", name: "burger", x: 850, y: 290, calories: 590 },
+				{ type: "villain", name: "villain2", x: 850, y: 290, calories: 590 },
 
-				{ type: "hero", name: "strawberry", x: 30, y: 415 },
-				{ type: "hero", name: "orange", x: 80, y: 405 },
-				{ type: "hero", name: "strawberry", x: 140, y: 405 },
+				{ type: "hero", name: "cat", x: 30, y: 415 },
+				{ type: "hero", name: "fastcat", x: 80, y: 405 },
+				{ type: "hero", name: "cat", x: 140, y: 405 },
 			]
 		},
 		{
@@ -776,36 +776,37 @@ var levels = {
 			background: 'dust',
 			entities: [
 				{ type: "ground", name: "dirt", x: 500, y: 440, width: 1000, height: 20, isStatic: true },
-				{ type: "ground", name: "wood", x: 185, y: 390, width: 30, height: 80, isStatic: true },
+				{ type: "ground", name: "stone", x: 185, y: 390, width: 30, height: 80, isStatic: true },
 
 				// RECTÁNGULO GRANDE
-				{ type: "block", name: "wood", x: 700, y: 405, width: 250, height: 25 },
-				{ type: "block", name: "wood", x: 595, y: 340, angle: 90, width: 130, height: 35 },
-				{ type: "block", name: "wood", x: 805, y: 340, angle: 90, width: 130, height: 35 },
-				{ type: "block", name: "wood", x: 700, y: 270, width: 250, height: 25 },
+				{ type: "block", name: "stone", x: 700, y: 405, width: 250, height: 25 },
+				{ type: "block", name: "stone", x: 595, y: 340, angle: 90, width: 130, height: 35 },
+				{ type: "block", name: "stone", x: 805, y: 340, angle: 90, width: 130, height: 35 },
+				{ type: "block", name: "stone", x: 700, y: 270, width: 250, height: 25 },
 
-				{ type: "villain", name: "burger", x: 700, y: 340, calories: 1000 },
+				{ type: "villain", name: "villain1", x: 700, y: 340, calories: 1000 },
 
 				// TORRE 1
-				{ type: "block", name: "wood", x: 400, y: 400, angle: 90, width: 80, height: 25 },
-				{ type: "block", name: "wood", x: 560, y: 400, angle: 90, width: 80, height: 25 },
-				{ type: "block", name: "wood", x: 480, y: 350, width: 187, height: 25 },
-				{ type: "block", name: "wood", x: 440, y: 280, angle: 90, width: 120, height: 25 },
-				{ type: "block", name: "wood", x: 520, y: 280, angle: 90, width: 120, height: 25 }, 
-				{ type: "block", name: "wood", x: 480, y: 170, width: 160, height: 25 }, 
-				{ type: "villain", name: "fries", x: 480, y: 290, calories: 420 },
-				{ type: "villain", name: "fries", x: 480, y: 380, calories: 420 },
-				{ type: "villain", name: "fries", x: 480, y: 160, calories: 420 },
+				{ type: "block", name: "stone", x: 400, y: 400, angle: 90, width: 80, height: 25 },
+				{ type: "block", name: "stone", x: 560, y: 400, angle: 90, width: 80, height: 25 },
+				{ type: "block", name: "stone", x: 480, y: 350, width: 187, height: 25 },
+				{ type: "block", name: "stone", x: 440, y: 280, angle: 90, width: 120, height: 25 },
+				{ type: "block", name: "stone", x: 520, y: 280, angle: 90, width: 120, height: 25 }, 
+				{ type: "block", name: "stone", x: 480, y: 170, width: 160, height: 25 }, 
+
+				{ type: "villain", name: "villain3", x: 480, y: 290, calories: 420 },
+				{ type: "villain", name: "villain3", x: 480, y: 380, calories: 420 },
+				{ type: "villain", name: "villain3", x: 480, y: 160, calories: 420 },
 
 				// TORRE 2
-				{ type: "block", name: "wood", x: 840, y: 400, angle: 90, width: 330, height: 25 },
-				{ type: "block", name: "wood", x: 860, y: 400, angle: 90, width: 330, height: 25 },
-				{ type: "block", name: "wood", x: 850, y: 100, width: 187, height: 25 }, 
-				{ type: "villain", name: "burger", x: 850, y: 95, calories: 540 },
+				{ type: "block", name: "stone", x: 840, y: 400, angle: 90, width: 330, height: 25 },
+				{ type: "block", name: "stone", x: 860, y: 400, angle: 90, width: 330, height: 25 },
+				{ type: "block", name: "stone", x: 850, y: 100, width: 187, height: 25 }, 
+				{ type: "villain", name: "villain2", x: 850, y: 95, calories: 540 },
 
-				{ type: "hero", name: "strawberry", x: 30, y: 405 },
-				{ type: "hero", name: "orange", x: 80, y: 405 },
-				{ type: "hero", name: "apple", x: 140, y: 405 },
+				{ type: "hero", name: "cat", x: 30, y: 405 },
+				{ type: "hero", name: "fastcat", x: 80, y: 405 },
+				{ type: "hero", name: "strongcat", x: 140, y: 405 },
 			]
 		},
 	],
@@ -867,6 +868,24 @@ var levels = {
 }
 
 var entities = {
+	// Mapeo de nombres de héroes a archivos de imagen
+	heroSpriteMap: {
+		"cat": "heroe1.png",
+		"fastcat": "heroe2.png",
+		"strongcat": "heroe3.png"
+	},
+	// Mapeo de nombres de villanos a archivos de imagen
+	villainSpriteMap: {
+		"villain1": "villano1.png",
+		"villain2": "villano2.png",
+		"villain3": "villano3.png"
+	},
+	// Mapeo de nombres de bloques a archivos de imagen
+	blockSpriteMap: {
+		"wood": "Wood.jpg",
+		"glass": "Glass.jpg",
+		"stone": "Stone.jpg"
+	},
 	definitions: {
 		"glass": {
 			fullHealth: 100,
@@ -880,18 +899,43 @@ var entities = {
 			friction: 0.4,
 			restitution: 0.4,
 		},
+		"stone": {
+			fullHealth: 800,
+			density: 3.0,
+			friction: 0.6,
+			restitution: 0.2,
+		},
 		"dirt": {
 			density: 3.0,
 			friction: 1.5,
 			restitution: 0.2,
 		},
-		"burger": {
-			shape: "circle",
+		"villain1": {
+			shape: "rectangle",
+			fullHealth: 60,
+			width: 50,
+			height: 60,
+			density: 0.7,
+			friction: 0.5,
+			restitution: 0.5,
+		},
+		"villain2": {
+			shape: "rectangle",
 			fullHealth: 40,
-			radius: 25,
-			density: 1,
+			width: 65,
+			height: 65,
+			density: 0.7,
 			friction: 0.5,
 			restitution: 0.4,
+		},
+		"villain3": {
+			shape: "rectangle",
+			fullHealth: 50,
+			width: 55,
+			height: 65,
+			density: 0.7,
+			friction: 0.5,
+			restitution: 0.6,
 		},
 		"sodacan": {
 			shape: "rectangle",
@@ -902,30 +946,21 @@ var entities = {
 			friction: 0.5,
 			restitution: 0.7,
 		},
-		"fries": {
-			shape: "rectangle",
-			fullHealth: 50,
-			width: 40,
-			height: 50,
-			density: 1,
-			friction: 0.5,
-			restitution: 0.6,
-		},
-		"apple": {
+		"strongcat": {
 			shape: "circle",
 			radius: 25,
 			density: 1.5,
 			friction: 0.5,
 			restitution: 0.4,
 		},
-		"orange": {
+		"fastcat": {
 			shape: "circle",
 			radius: 25,
 			density: 1.5,
 			friction: 0.5,
 			restitution: 0.4,
 		},
-		"strawberry": {
+		"cat": {
 			shape: "circle",
 			radius: 15,
 			density: 2.0,
@@ -959,7 +994,9 @@ var entities = {
 				cleanEntity.shape = "rectangle";
 				cleanEntity.width = entity.width;
 				cleanEntity.height = entity.height;
-				cleanEntity.sprite = loader.loadImage("images/entities/" + entity.name + ".png");
+				// Usar mapeo de sprites para bloques
+				var blockSpriteFile = entities.blockSpriteMap[entity.name] ? entities.blockSpriteMap[entity.name] : entity.name + ".png";
+				cleanEntity.sprite = loader.loadImage("images/entities/" + blockSpriteFile);
 				cleanEntity.breakSound = game.breakSound[entity.name];
 				box2d.createRectangle(cleanEntity, definition);
 				break;
@@ -975,7 +1012,13 @@ var entities = {
 			case "villain": // Pueden ser círculos o rectángulos
 				cleanEntity.health = definition.fullHealth;
 				cleanEntity.fullHealth = definition.fullHealth;
-				cleanEntity.sprite = loader.loadImage("images/entities/" + entity.name + ".png");
+				// Usar mapeo de sprites para h�roes y villanos
+				var spriteFile = (entity.type === "hero" && entities.heroSpriteMap[entity.name])
+					? entities.heroSpriteMap[entity.name]
+					: (entity.type === "villain" && entities.villainSpriteMap[entity.name])
+					? entities.villainSpriteMap[entity.name]
+					: entity.name + ".png";
+				cleanEntity.sprite = loader.loadImage("images/entities/" + spriteFile);
 				cleanEntity.shape = definition.shape;
 				cleanEntity.bounceSound = game.bounceSound;
 				if (definition.shape == "circle") {
