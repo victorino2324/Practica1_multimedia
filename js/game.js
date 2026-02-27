@@ -192,6 +192,86 @@ var game = {
 	// La puntuación del juego
 	score: 0,
 
+	// Dividir la orange en dos
+	splitOrange: function(heroBody) {
+		var entity = heroBody.GetUserData();
+		
+		// Verificar que el cuerpo todavía existe
+		if (!heroBody || !entity) return;
+		
+		// Guardar la posición y velocidad actual
+		var position = heroBody.GetPosition();
+		var velocity = heroBody.GetLinearVelocity();
+		
+		// Crear una segunda orange en la misma posición
+		var newEntity = {
+			type: "hero",
+			name: "orange",
+			x: position.x * box2d.scale,
+			y: position.y * box2d.scale,
+			health: entity.fullHealth,
+			fullHealth: entity.fullHealth,
+			sprite: entity.sprite,
+			shape: "circle",
+			radius: entity.radius,
+			bounceSound: entity.bounceSound,
+			launched: true
+		};
+		
+		var definition = entities.definitions["orange"];
+		var newBody = box2d.createCircle(newEntity, definition);
+		
+		// Aplicar impulsos en direcciones diferentes
+		// Naranja original va hacia arriba-izquierda
+		var splitForce = 3;
+		var impulse1 = new b2Vec2(velocity.x - splitForce, velocity.y - splitForce);
+		heroBody.SetLinearVelocity(impulse1);
+		
+		// Nueva naranja va hacia arriba-derecha
+		var impulse2 = new b2Vec2(velocity.x + splitForce, velocity.y - splitForce);
+		newBody.SetLinearVelocity(impulse2);
+		
+		// Añadir rotación para efecto visual
+		heroBody.SetAngularVelocity(2);
+		newBody.SetAngularVelocity(-2);
+	},
+
+	// Duplicar el tamaño del apple
+	enlargeApple: function(heroBody) {
+		var entity = heroBody.GetUserData();
+		
+		// Guardar la velocidad actual
+		var currentVelocity = heroBody.GetLinearVelocity();
+		var currentAngularVelocity = heroBody.GetAngularVelocity();
+		
+		// Duplicar el radio
+		var oldRadius = entity.radius;
+		entity.radius = oldRadius * 2;
+		
+		// Destruir el fixture actual
+		var fixture = heroBody.GetFixtureList();
+		if (fixture) {
+			heroBody.DestroyFixture(fixture);
+		}
+		
+		// Crear un nuevo fixture con el nuevo tamaño
+		var fixtureDef = new b2FixtureDef;
+		var definition = entities.definitions[entity.name];
+		fixtureDef.density = definition.density;
+		fixtureDef.friction = definition.friction;
+		fixtureDef.restitution = definition.restitution;
+		fixtureDef.shape = new b2CircleShape(entity.radius / box2d.scale);
+		
+		heroBody.CreateFixture(fixtureDef);
+		
+		// Restaurar la velocidad
+		heroBody.SetLinearVelocity(currentVelocity);
+		heroBody.SetAngularVelocity(currentAngularVelocity);
+		
+		// Recalcular la masa del cuerpo con el nuevo fixture
+		heroBody.ResetMassData();
+	},
+
 	//Despliegue la pantalla para centrarse en newCenter
 	panTo: function (newCenter) {
 		if (Math.abs(newCenter - game.offsetLeft - game.canvas.width / 4) > 0
@@ -281,6 +361,28 @@ var game = {
 				var slingshotCenterY = game.slingshotY + 25;
 				var impulse = new b2Vec2((slingshotCenterX - mouse.x - game.offsetLeft) * impulseScaleFactor, (slingshotCenterY - mouse.y) * impulseScaleFactor);
 				game.currentHero.ApplyImpulse(impulse, game.currentHero.GetWorldCenter());
+				
+				// Si es un apple, duplicar su tamaño después de 0.5 segundos
+				if (game.currentHero.GetUserData().name === "apple") {
+					var heroBody = game.currentHero;
+					setTimeout(function() {
+						// Verificar que el héroe todavía existe
+						if (heroBody && heroBody.GetUserData()) {
+							game.enlargeApple(heroBody);
+						}
+					}, 350);
+				}
+				
+				// Si es una orange, dividirla en dos después de 300ms
+				if (game.currentHero.GetUserData().name === "orange") {
+					var heroBody = game.currentHero;
+					setTimeout(function() {
+						// Verificar que el héroe todavía existe
+						if (heroBody && heroBody.GetUserData()) {
+							game.splitOrange(heroBody);
+						}
+					}, 300);
+				}
 			} else {
 				// Si el héroe desapareció, volver a cargar el siguiente
 				game.mode = "load-next-hero";
