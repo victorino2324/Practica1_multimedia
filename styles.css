@@ -14,13 +14,29 @@
 
 /* Pantalla del menú de incio del juego */
 #gamestartscreen {
-	padding-top:250px;
+	padding-top: 80px;
 	text-align:center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	width: 640px;
+	height: 480px;
+}
+
+#gamestartscreen > div {
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+	align-items: center;
+	justify-content: center;
 }
 
 #gamestartscreen img {
 	margin:10px;
 	cursor:pointer;
+	width: 80px;
+	height: auto;
 }
 
 /* Pantalla de selección de música */
@@ -31,21 +47,36 @@
 	justify-content:center;
 }
 
+#musicselectscreen img {
+	width: 80px;
+	height: auto;
+}
+
 /* Pantalla de selección de nivel */
 #levelselectscreen {
 	padding-top:150px;
-	padding-left:50px;	
+	padding-left:50px;
+	padding-right:50px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
 }
 
 #levelselectscreen input {
-	margin:20px;
+	margin:10px;
 	cursor:pointer;
-	background:url(images/icons/level.png) no-repeat;
-	color:yellow;
+	background:url(images/icons/level.png) no-repeat center;
+	background-size: contain;
+	color:#3d2817;
 	font-size: 20px;
 	width:64px;
 	height:64px;
 	border:0;
+	text-align: center;
+	font-weight: bold;
+	padding: 0;
+	padding-bottom: 6px;
+	padding-right: 4px;
 }
 
 /* Pantalla de carga */
@@ -76,6 +107,8 @@
     position:relative;
     padding-left:10px;
     cursor:pointer;
+    width: 40px;
+    height: auto;
 }
 
 #scorescreen #score {
@@ -108,6 +141,8 @@ endingscreen {
 	top:10px;
 	position:relative;
 	cursor:pointer;
+	width: 50px;
+	height: auto;
 }
 
 #endingscreen #endingmessage  {    
