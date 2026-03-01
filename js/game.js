@@ -62,11 +62,11 @@ var game = {
 		game.backgroundMusic.loop = true;
 
 		// Cargar todos los efectos de sonido
-		game.slingshotReleasedSound = loader.loadSound("audio/released");
-		game.bounceSound = loader.loadSound('audio/bounce');
+		game.slingshotReleasedSound = loader.loadSound("audio/SFX-throw");
+		game.bounceSound = loader.loadSound('audio/SFX-bounce');
 		game.breakSound = {
-			"glass": loader.loadSound('audio/glassbreak'),
-			"wood": loader.loadSound('audio/woodbreak')
+			"glass": loader.loadSound('audio/SFX-glassbreak'),
+			"wood": loader.loadSound('audio/SFX-woodbreak')
 		};
 
 		// Ocultar todas las capas del juego y mostrar la pantalla de inicio
