@@ -66,7 +66,8 @@ var game = {
 		game.bounceSound = loader.loadSound('audio/SFX-bounce');
 		game.breakSound = {
 			"glass": loader.loadSound('audio/SFX-glassbreak'),
-			"wood": loader.loadSound('audio/SFX-woodbreak')
+			"wood": loader.loadSound('audio/SFX-woodbreak'),
+			"stone": loader.loadSound('audio/SFX-rockbreak')
 		};
 
 		// Ocultar todas las capas del juego y mostrar la pantalla de inicio
